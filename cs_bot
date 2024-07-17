@@ -5,8 +5,8 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
 
 
-TOKEN: Final = '7256893867:AAGG9V3uNInCxAXjcLNzjnkXjDpxXJZkAM0'
-BOT_USERNAME: Final = '@csyazd_bot'
+TOKEN = '7256893867:AAGG9V3uNInCxAXjcLNzjnkXjDpxXJZkAM0'
+BOT_USERNAME = '@csyazd_bot'
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
