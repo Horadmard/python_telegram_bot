@@ -18,11 +18,8 @@ import logging
 from typing import Optional, Tuple
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram import Chat, ChatMember, ChatMemberUpdated, Update
-from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
-    ChatMemberHandler,
     CommandHandler,
     ContextTypes,
     ConversationHandler,
