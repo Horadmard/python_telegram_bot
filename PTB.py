@@ -14,7 +14,7 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
-import user
+from database import *
 
 import logging
 from typing import Optional, Tuple
