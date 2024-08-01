@@ -14,6 +14,8 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
+import user
+
 import logging
 from typing import Optional, Tuple
 
@@ -56,7 +58,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     )
 
     data.append(update.effective_user.id)
-    print(update.effective_chat.id)
+    # print(update.effective_chat.id)
+
+    person = person(id=update.effective_user.id)
 
     return NAME
 
