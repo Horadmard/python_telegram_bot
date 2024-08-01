@@ -35,12 +35,12 @@ def insert_user_data(id, user_data):
     conn.commit()
     conn.close()
 
-def update_user_email(id, new_email):
+def update_user_email(id, element, value):
     conn = sqlite3.connect("user_data.db")
     cursor = conn.cursor()
 
     # Update the email for the specified user ID
-    cursor.execute("UPDATE users SET email = ? WHERE id = ?", (new_email, id))
+    cursor.execute(f"UPDATE users SET {element} = ? WHERE id = ?", (value, id))
 
     conn.commit()
     conn.close()
@@ -80,5 +80,6 @@ def get_user_info_by_id(id, requested_fields):
 # update_user_email(user_id_to_update, new_email_address)
 
 
-create_database()
-insert_user_data(1, ('mato','','','','','','',''))
+# create_database()
+# insert_user_data(1, ('mato','','','','','','',''))
+# update_user_email(1, "email", "iran")
