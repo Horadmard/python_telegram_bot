@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
 # TOKEN = '...'
+TOKEN = "7259922195:AAGzmCGq-xhqEnzFffDUlnBomd-oB5YIrXY"
 
 
 
@@ -226,8 +227,8 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info("User %s canceled the registration.", user.first_name)
     await update.message.reply_text(
         # "ثبت‌نام هوتوتو ..."
-        "ثبت‌نام لغو شد؛\n"
-        "اگه خواستی از اول ثبت‌نام کنی کلیک کن /start",
+        "ثبت‌نام لغو و اطلاعاتت پاک شد؛\n"
+        "اگه خواستی ثبت‌نامت رو از سر بگیری، کلیک کن /start",
         reply_markup=ReplyKeyboardRemove(),
     )
 
