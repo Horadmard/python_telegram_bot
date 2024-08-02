@@ -28,7 +28,6 @@ logger = logging.getLogger(__name__)
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
 # TOKEN = '...'
-TOKEN = "7259922195:AAGzmCGq-xhqEnzFffDUlnBomd-oB5YIrXY"
 
 
 
@@ -215,6 +214,7 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await context.bot.send_message(
         chat_id='@python_database',
         text=txt,
+        # parse_mode='MarkdownV2',
     )
 
     return ConversationHandler.END
