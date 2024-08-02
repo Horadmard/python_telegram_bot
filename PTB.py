@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
-TOKEN = '...'
+# TOKEN = '...'
 
 
 
@@ -253,10 +253,8 @@ def main() -> None:
             AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, age)],
             PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, phone)],
             UNI: [MessageHandler(filters.TEXT & ~filters.COMMAND, uni), CommandHandler("skip", skip_uni)],
-            # UNI: [MessageHandler(filters.TEXT, uni), CommandHandler("skip", skip_uni)],
             STUNUM: [MessageHandler(filters.TEXT & ~filters.COMMAND, stunum)],
             EMAIL: [MessageHandler(filters.Regex(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'), email)],
-            # EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email)],
             LICENSE: [MessageHandler(filters.Regex("^(بله|خیر)$"), license)],
             REL: [MessageHandler(filters.TEXT & ~filters.COMMAND, rel)],
         },
