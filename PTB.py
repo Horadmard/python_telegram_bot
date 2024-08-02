@@ -50,6 +50,13 @@ TOKEN = "7259922195:AAGzmCGq-xhqEnzFffDUlnBomd-oB5YIrXY"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
+    if not check_user_exists(update.effective_chat.id):
+        await update.message.reply_text(
+        "شما قبلا ثبت نام کرده اید! ",
+        )
+        
+        return ConversationHandler.END
+
     user = update.message.from_user
     logger.info("user.id of %s: %s", user.first_name, user.id)
 

@@ -82,6 +82,18 @@ def delete_user_by_id(id):
     conn.commit()
     conn.close()
 
+def check_user_exists(id):
+    conn = sqlite3.connect("user_data.db")
+    cursor = conn.cursor()
+
+    # Execute a query to check if the user with the specified ID exists
+    cursor.execute("SELECT 1 FROM users WHERE id = ?", (id,))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    return result is not None
+
 
 # # Example usage:
 # create_database()
@@ -109,3 +121,5 @@ def delete_user_by_id(id):
 # create_database()
 # insert_user_data(1, ('mato','','','','','','',''))
 # update_user_data(1, "email", "iran")
+
+# print(check_user_exists(10))
