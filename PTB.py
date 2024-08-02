@@ -107,8 +107,8 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     update_user_data(update.effective_user.id, "phone", update.effective_message.text)
 
     await update.message.reply_text(
-        "🌀 دانشگاه محل تحصیل:\n"
-        " - اگه در حال حاضر مشغول به تحصیل نیستید کلیک کنید /skip."
+        "🌀 دانشگاه محل تحصیل:/n"
+        " - اگه در حال حاضر مشغول به تحصیل نیستید کلیک کنید 👈🏻 /skip"
         )
 
     return UNI
