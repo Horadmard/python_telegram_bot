@@ -85,7 +85,7 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
         "🌀 دانشگاه محل تحصیل: \n"
-        "_  \- اگه در حال حاضر مشغول به تحصیل نیستید کلیک کنید /skip _",
+        "_  \- اگه در حال حاضر مشغول به تحصیل نیستی کلیک کن /skip _",
         parse_mode='MarkdownV2'
         )
 
@@ -223,26 +223,17 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancels and ends the conversation."""
     user = update.message.from_user
-    logger.info("User %s canceled the conversation.", user.first_name)
+    logger.info("User %s canceled the registration.", user.first_name)
     await update.message.reply_text(
-        "ثبت‌نام هوتوتو ...", reply_markup=ReplyKeyboardRemove()
+        # "ثبت‌نام هوتوتو ..."
+        "ثبت‌نام لغو شد؛\n"
+        "اگه خواستی از اول ثبت‌نام کنی کلیک کن /start",
+        reply_markup=ReplyKeyboardRemove(),
     )
 
     delete_user_by_id(update.effective_user.id)
 
     # data.clear()
-
-    return ConversationHandler.END
-
-
-async def del_acc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    await update.message.reply_text(
-        "ثبت‌نام شما با موفقیت، *شکست* خورد 🤝",
-        parse_mode='MarkdownV2'
-    )
-
-    delete_user_by_id(update.effective_user.id)
 
     return ConversationHandler.END
 
@@ -271,7 +262,7 @@ def main() -> None:
 
     application.add_handler(conv_handler)
     
-    application.add_handler(CommandHandler('del', del_acc))
+    application.add_handler(CommandHandler('cancel', cancel))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
