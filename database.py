@@ -14,7 +14,7 @@ def create_database():
             uni TEXT,
             stunum TEXT,
             email TEXT,
-            want_license INTEGER,
+            want_license TEXT,
             relation TEXT
         )
     """)
@@ -35,7 +35,7 @@ def insert_user_data(id, user_data):
     conn.commit()
     conn.close()
 
-def update_user_email(id, element, value):
+def update_user_data(id, element, value):
     conn = sqlite3.connect("user_data.db")
     cursor = conn.cursor()
 
@@ -57,6 +57,32 @@ def get_user_info_by_id(id, requested_fields):
     conn.close()
     return user_info
 
+def get_element(id, element):
+    conn = sqlite3.connect("user_data.db")
+    cursor = conn.cursor()
+
+    # Execute a query to retrieve the email for the specified user ID
+    cursor.execute(f"SELECT {element} FROM users WHERE id = ?", (id,))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    if result:
+        return result[0]  # Return the email address
+    else:
+        return None  # User not found
+    
+def delete_user_by_id(id):
+    conn = sqlite3.connect("user_data.db")
+    cursor = conn.cursor()
+
+    # Delete the user with the specified ID
+    cursor.execute("DELETE FROM users WHERE id = ?", (id,))
+
+    conn.commit()
+    conn.close()
+
+
 # # Example usage:
 # create_database()
 
@@ -77,9 +103,9 @@ def get_user_info_by_id(id, requested_fields):
 # # Example usage:
 # user_id_to_update = 1
 # new_email_address = "new.email@example.com"
-# update_user_email(user_id_to_update, new_email_address)
+# update_user_data(user_id_to_update, new_email_address)
 
 
 # create_database()
 # insert_user_data(1, ('mato','','','','','','',''))
-# update_user_email(1, "email", "iran")
+# update_user_data(1, "email", "iran")

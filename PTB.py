@@ -45,7 +45,7 @@ NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 # TOKEN = "7256893867:AAHLJ_ED4uO_8QiNvYb9kKyEbFRlI9ZDaJA"
 TOKEN = "7259922195:AAGzmCGq-xhqEnzFffDUlnBomd-oB5YIrXY"
 
-data = []
+# data = []
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -57,10 +57,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         "🌀 نام و نام‌خانوادگی: ",
     )
 
-    data.append(update.effective_user.id)
+    # data.append(update.effective_user.id)
     # print(update.effective_chat.id)
 
-    person = person(id=update.effective_user.id)
+    insert_user_data(update.effective_user.id, ('','','','','','','',''))
 
     return NAME
 
@@ -69,7 +69,8 @@ async def name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("name of %s: %s", user.first_name, update.message.text)
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "name", update.effective_message.text)
 
     await update.message.reply_text("🌀 سن:")
 
@@ -80,7 +81,8 @@ async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("age of %s: %s", user.first_name, update.message.text)
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "age", update.effective_message.text)
 
     await update.message.reply_text(
         "🌀 شماره تلفن همراه:",
@@ -94,7 +96,8 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("phone of %s: %s", user.first_name, update.message.text)
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "phone", update.effective_message.text)
 
     await update.message.reply_text(
         "🌀 دانشگاه محل تحصیل:\n"
@@ -109,7 +112,8 @@ async def uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("University of %s: %s", user.first_name, update.message.text)
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "uni", update.effective_message.text)
 
     await update.message.reply_text(
         "🌀 شماره دانشجویی:"
@@ -128,8 +132,10 @@ async def skip_uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         # input_field_placeholder="example@gmail.com"
         )
     
-    data.append('-')
-    data.append('-')
+    # data.append('-')
+    # data.append('-')
+    update_user_data(update.effective_user.id, "uni", '-')
+    update_user_data(update.effective_user.id, "stunum", '-')
 
     return EMAIL
 
@@ -138,7 +144,8 @@ async def stunum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("Student code of %s: %s", user.first_name, update.message.text)
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "stunum", update.effective_message.text)
 
     await update.message.reply_text(
         "🌀 ایمیل شخصی:\n"
@@ -152,7 +159,8 @@ async def email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("Email of %s: %s", user.first_name, update.message.text)
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "email", update.effective_message.text)
 
     # keyboard = [
     #     [
@@ -197,7 +205,8 @@ async def license(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "want_license", update.effective_message.text)
 
     await update.message.reply_text(
         "🌀 طریقه‌ی آشنایی با رویداد ما:\n"
@@ -212,36 +221,37 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("%s: %s", user.first_name, update.message.text)
 
-    data.append(update.effective_message.text)
+    # data.append(update.effective_message.text)
+    update_user_data(update.effective_user.id, "relation", update.effective_message.text)
 
     await update.message.reply_text(
         "ثبت نام شما با موفقیت انجام شد."
         )
 
-    print(data)
+    # print(data)
 
     txt = f"""
 
 🔗 فرم ثبت نام دوره پایتون
 
-🌀 نام و نام‌خانوادگی: {data[1]}
+🌀 نام و نام‌خانوادگی: {get_element(update.effective_user.id, 'name')}
 
-🌀 سن: {data[2]}
+🌀 سن: {get_element(update.effective_user.id, 'age')}
 
-🌀 شماره تلفن همراه: {data[3]}
+🌀 شماره تلفن همراه: {get_element(update.effective_user.id, 'phone')}
 
-🌀 دانشگاه محل تحصیل: {data[4]}
+🌀 دانشگاه محل تحصیل: {get_element(update.effective_user.id, 'uni')}
 - اگه در حال حاضر مشغول به تحصیل نیستید این بخش و بخش بعدی رو خالی بزارید.
 
-🌀 شماره دانشجویی: {data[5]}
+🌀 شماره دانشجویی: {get_element(update.effective_user.id, 'stunum')}
 
-🌀 ایمیل شخصی: {data[6]}
+🌀 ایمیل شخصی: {get_element(update.effective_user.id, 'email')}
 - از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد.
 
-🌀 درخواست گواهی شرکت در دوره رو دارید؟ {data[7]}
+🌀 درخواست گواهی شرکت در دوره رو دارید؟ {get_element(update.effective_user.id, 'want_license')}
 - گواهی از طرف انجمن علمی علوم کامپیوتر یزد صادر میشه و نشون میده شما دوره رو گذروندید.
 
-🌀 طریقه‌ی آشنایی با رویداد ما: {data[8]}
+🌀 طریقه‌ی آشنایی با رویداد ما: {get_element(update.effective_user.id, 'relation')}
 - کانال تلگرامی، اینستاگرم، معرفی دوستان و ...
 
 
@@ -250,9 +260,6 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         chat_id='@python_database',
         text=txt,
     )
-
-    for i in range(10):
-        data.pop()
 
     return ConversationHandler.END
 
@@ -337,7 +344,9 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         "Bye! I hope we can talk again some day.", reply_markup=ReplyKeyboardRemove()
     )
 
-    data.clear()
+    delete_user_by_id(update.effective_user.id)
+
+    # data.clear()
 
     return ConversationHandler.END
 
