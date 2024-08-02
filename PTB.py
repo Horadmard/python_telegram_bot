@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
 # TOKEN = '...'
-
+TOKEN = "7259922195:AAGzmCGq-xhqEnzFffDUlnBomd-oB5YIrXY"
 
 
 
