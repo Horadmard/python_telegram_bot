@@ -31,6 +31,7 @@ NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
 
 
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     if check_user_exists(update.effective_chat.id):
@@ -85,7 +86,8 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
         "🌀 دانشگاه محل تحصیل: \n"
-        " - اگه در حال حاضر مشغول به تحصیل نیستید کلیک کنید 👈🏻 /skip"
+        "_  \- اگه در حال حاضر مشغول به تحصیل نیستید کلیک کنید /skip _",
+        parse_mode='MarkdownV2'
         )
 
     return UNI
@@ -111,7 +113,8 @@ async def skip_uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
         "🌀 ایمیل شخصی:\n"
-        " - از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد.",
+        "_  \- از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد\. _",
+        parse_mode='MarkdownV2',
         )
 
     update_user_data(update.effective_user.id, "uni", '-')
@@ -127,7 +130,8 @@ async def stunum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
         "🌀 ایمیل شخصی:\n"
-        " - از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد."
+        "_  \- از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد\. _",
+        parse_mode='MarkdownV2',
         )
 
     return EMAIL
@@ -143,7 +147,8 @@ async def email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text(
 
         "🌀 درخواست گواهی شرکت در دوره رو دارید؟\n"
-        " - گواهی از طرف انجمن علمی علوم کامپیوتر یزد صادر میشه و نشون میده شما دوره رو گذروندید.",
+        "_  \- گواهی از طرف انجمن علمی علوم کامپیوتر یزد صادر میشه و نشون میده شما دوره رو گذروندید\. _",
+        parse_mode='MarkdownV2',
 
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True, input_field_placeholder="گواهی بدم؟", resize_keyboard=True,
@@ -161,7 +166,8 @@ async def license(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
         "🌀 طریقه‌ی آشنایی با رویداد ما:\n"
-        " - کانال تلگرامی، اینستاگرم، معرفی دوستان و ...",
+        "_  \- کانال تلگرامی، اینستاگرم، معرفی دوستان و \.\.\. _",
+        parse_mode='MarkdownV2',
         reply_markup=ReplyKeyboardRemove(),
         )
 
@@ -176,7 +182,8 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     update_user_data(update.effective_user.id, "relation", update.effective_message.text)
 
     await update.message.reply_text(
-        "ثبت نام شما با موفقیت انجام شد."
+        "ثبت نام شما با *موفقیت* انجام شد\.",
+        parse_mode='MarkdownV2'
         )
 
     txt = f"""
@@ -218,7 +225,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
     await update.message.reply_text(
-        "Bye! I hope we can talk again some day.", reply_markup=ReplyKeyboardRemove()
+        "ثبت‌نام هوتوتو ...", reply_markup=ReplyKeyboardRemove()
     )
 
     delete_user_by_id(update.effective_user.id)
@@ -231,7 +238,8 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def del_acc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
-        "Deleted!",
+        "ثبت‌نام شما با موفقیت، *شکست* خورد 🤝",
+        parse_mode='MarkdownV2'
     )
 
     delete_user_by_id(update.effective_user.id)
