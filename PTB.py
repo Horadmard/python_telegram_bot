@@ -42,8 +42,7 @@ logger = logging.getLogger(__name__)
 
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
-# TOKEN = "7256893867:AAHLJ_ED4uO_8QiNvYb9kKyEbFRlI9ZDaJA"
-TOKEN = "7259922195:AAGzmCGq-xhqEnzFffDUlnBomd-oB5YIrXY"
+TOKEN = '...'
 
 # data = []
 
@@ -64,9 +63,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         "🌀 نام و نام‌خانوادگی: ",
     )
 
-    # data.append(update.effective_user.id)
-    # print(update.effective_chat.id)
-
     insert_user_data(update.effective_user.id, ('','','','','','','',''))
 
     return NAME
@@ -76,7 +72,6 @@ async def name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("name of %s: %s", user.first_name, update.message.text)
 
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "name", update.effective_message.text)
 
     await update.message.reply_text("🌀 سن:")
@@ -88,7 +83,6 @@ async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("age of %s: %s", user.first_name, update.message.text)
 
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "age", update.effective_message.text)
 
     await update.message.reply_text(
@@ -103,7 +97,6 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("phone of %s: %s", user.first_name, update.message.text)
 
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "phone", update.effective_message.text)
 
     await update.message.reply_text(
@@ -119,7 +112,6 @@ async def uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("University of %s: %s", user.first_name, update.message.text)
 
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "uni", update.effective_message.text)
 
     await update.message.reply_text(
@@ -136,11 +128,8 @@ async def skip_uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text(
         "🌀 ایمیل شخصی:\n"
         " - از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد.",
-        # input_field_placeholder="example@gmail.com"
         )
-    
-    # data.append('-')
-    # data.append('-')
+
     update_user_data(update.effective_user.id, "uni", '-')
     update_user_data(update.effective_user.id, "stunum", '-')
 
