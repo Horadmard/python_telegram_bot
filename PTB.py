@@ -357,6 +357,16 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return ConversationHandler.END
 
+async def del_acc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+    await update.message.reply_text(
+        "Deleted!",
+    )
+
+    delete_user_by_id(update.effective_user.id)
+
+    return ConversationHandler.END
+
 def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
@@ -389,6 +399,8 @@ def main() -> None:
     )
 # NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL
     application.add_handler(conv_handler)
+    
+    application.add_handler(CommandHandler('del', del_acc))
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling(allowed_updates=Update.ALL_TYPES)
