@@ -1,4 +1,5 @@
 
+import re
 from database import *
 
 import logging
@@ -28,7 +29,6 @@ logger = logging.getLogger(__name__)
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
 # TOKEN = '...'
-TOKEN = "7259922195:AAGzmCGq-xhqEnzFffDUlnBomd-oB5YIrXY"
 
 
 
@@ -65,6 +65,10 @@ async def name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
+    if not re.match(r'^\d{1,2}$', update.effective_message.text):
+        await update.message.reply_text("فرمت وارد شده صحیح نیست.")
+        return AGE
+
     user = update.message.from_user
     logger.info("age of %s: %s", user.first_name, update.message.text)
 
@@ -78,6 +82,13 @@ async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return PHONE
 
 async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+    if not re.match(r'^09\d{9}$', update.message.text) and not re.match(r'^۰۹[\u0660-\u0669]{9}$', update.message.text):
+        await update.message.reply_text(
+            "فرمت وارد شده صحیح نیست.\n"
+            "مثال: 09123456789"
+            )
+        return PHONE
 
     user = update.message.from_user
     logger.info("phone of %s: %s", user.first_name, update.message.text)
@@ -124,6 +135,10 @@ async def skip_uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def stunum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
+    if not re.match(r'^\d$', update.effective_message.text):
+        await update.message.reply_text("فرمت وارد شده صحیح نیست.")
+        return STUNUM
+
     user = update.message.from_user
     logger.info("Student code of %s: %s", user.first_name, update.message.text)
     update_user_data(update.effective_user.id, "stunum", update.effective_message.text)
@@ -137,6 +152,13 @@ async def stunum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return EMAIL
 
 async def email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+    if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', update.message.text):
+        await update.message.reply_text(
+            "فرمت وارد شده برای آدرس ایمیل صحیح نیست.\n"
+            "مثال: example@gmail.com"
+            )
+        return EMAIL
 
     user = update.message.from_user
     logger.info("Email of %s: %s", user.first_name, update.message.text)
@@ -181,10 +203,6 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     update_user_data(update.effective_user.id, "relation", update.effective_message.text)
 
-    await update.message.reply_text(
-        "ثبت نام شما با *موفقیت* انجام شد\.",
-        parse_mode='MarkdownV2'
-        )
 
     txt = f"""
 
@@ -212,6 +230,19 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 """
+    
+
+    await context.bot.send_message(
+        chat_id=user.id,
+        text=txt,
+        # parse_mode='MarkdownV2',
+    )
+
+    await update.message.reply_text(
+        "ثبت نام شما با *موفقیت* انجام شد\.",
+        parse_mode='MarkdownV2'
+        )
+
     await context.bot.send_message(
         chat_id='@python_database',
         text=txt,
@@ -233,9 +264,18 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     )
 
     delete_user_by_id(update.effective_user.id)
+    return ConversationHandler.END
 
-    # data.clear()
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
+    user = update.message.from_user
+    logger.info("User %s wants help.", user.first_name)
+    await update.message.reply_text(
+        "هر سوال یا مشکلی داری، میتونی از این آیدی بپرسی:\n"
+        "@cs_yazd_admin"
+    )
+
+    delete_user_by_id(update.effective_user.id)
     return ConversationHandler.END
 
 
@@ -251,10 +291,12 @@ def main() -> None:
         states={
             NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, name)],
             AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, age)],
+            # PHONE: [MessageHandler(filters.Regex("^09[0-9]{9}$"), phone)],
             PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, phone)],
             UNI: [MessageHandler(filters.TEXT & ~filters.COMMAND, uni), CommandHandler("skip", skip_uni)],
             STUNUM: [MessageHandler(filters.TEXT & ~filters.COMMAND, stunum)],
-            EMAIL: [MessageHandler(filters.Regex(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'), email)],
+            # EMAIL: [MessageHandler(filters.Regex(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'), email)],
+            EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email)],
             LICENSE: [MessageHandler(filters.Regex("^(بله|خیر)$"), license)],
             REL: [MessageHandler(filters.TEXT & ~filters.COMMAND, rel)],
         },
@@ -263,6 +305,7 @@ def main() -> None:
 
     application.add_handler(conv_handler)
     
+    application.add_handler(CommandHandler('help', help))
     application.add_handler(CommandHandler('cancel', cancel))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
