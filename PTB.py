@@ -1,18 +1,3 @@
-#!/usr/bin/env python
-# pylint: disable=unused-argument
-# This program is dedicated to the public domain under the CC0 license.
-
-"""
-First, a few callback functions are defined. Then, those functions are passed to
-the Application and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-
-Usage:
-Example of a bot-user conversation using ConversationHandler.
-Send /start to initiate the conversation.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
 
 from database import *
 
@@ -139,8 +124,6 @@ async def stunum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     user = update.message.from_user
     logger.info("Student code of %s: %s", user.first_name, update.message.text)
-
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "stunum", update.effective_message.text)
 
     await update.message.reply_text(
@@ -154,54 +137,27 @@ async def email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     user = update.message.from_user
     logger.info("Email of %s: %s", user.first_name, update.message.text)
-
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "email", update.effective_message.text)
-
-    # keyboard = [
-    #     [
-    #         InlineKeyboardButton("بله", callback_data="بله"),
-    #         InlineKeyboardButton("خیر", callback_data="خیر"),
-    #     ],
-        # [InlineKeyboardButton("Option 3", callback_data="3")],
-    # ]
-
-    # reply_markup = InlineKeyboardMarkup(keyboard)
-
-    # await update.message.reply_text("Please choose:", reply_markup=reply_markup)
 
     reply_keyboard = [["بله", "خیر"]]
 
     await update.message.reply_text(
+
         "🌀 درخواست گواهی شرکت در دوره رو دارید؟\n"
         " - گواهی از طرف انجمن علمی علوم کامپیوتر یزد صادر میشه و نشون میده شما دوره رو گذروندید.",
-        
-        # reply_markup=ReplyKeyboardMarkup(
-        #     reply_keyboard, one_time_keyboard=True, input_field_placeholder="گواهی شرکت در رویداد؟"
-        # ),
+
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True, input_field_placeholder="گواهی بدم؟", resize_keyboard=True,
         ),
-        # reply_markup=reply_markup,
+
         )
 
     return LICENSE
 
 async def license(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
-    # query = update.callback_query
-
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-    # await query.answer()
-    # await query.edit_message_text(text=f"Selected option: {query.data}")
-
     user = update.message.from_user
     logger.info("Is he/she whants license? %s: %s", user.first_name, update.message.text)
-
-
-
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "want_license", update.effective_message.text)
 
     await update.message.reply_text(
@@ -212,19 +168,17 @@ async def license(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return REL
 
+
 async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     user = update.message.from_user
     logger.info("%s: %s", user.first_name, update.message.text)
 
-    # data.append(update.effective_message.text)
     update_user_data(update.effective_user.id, "relation", update.effective_message.text)
 
     await update.message.reply_text(
         "ثبت نام شما با موفقیت انجام شد."
         )
-
-    # print(data)
 
     txt = f"""
 
@@ -259,78 +213,6 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return ConversationHandler.END
 
-# NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL
-
-# async def gender(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     """Stores the selected gender and asks for a photo."""
-#     user = update.message.from_user
-#     logger.info("Gender of %s: %s", user.first_name, update.message.text)
-#     await update.message.reply_text(
-#         "I see! Please send me a photo of yourself, "
-#         "so I know what you look like, or send /skip if you don't want to.",
-#         reply_markup=ReplyKeyboardRemove(),
-#     )
-
-#     return PHOTO
-
-
-# async def photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     """Stores the photo and asks for a location."""
-#     user = update.message.from_user
-#     photo_file = await update.message.photo[-1].get_file()
-#     await photo_file.download_to_drive("user_photo.jpg")
-#     logger.info("Photo of %s: %s", user.first_name, "user_photo.jpg")
-#     await update.message.reply_text(
-#         "Gorgeous! Now, send me your location please, or send /skip if you don't want to."
-#     )
-
-#     return LOCATION
-
-
-# async def skip_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     """Skips the photo and asks for a location."""
-#     user = update.message.from_user
-#     logger.info("User %s did not send a photo.", user.first_name)
-#     await update.message.reply_text(
-#         "I bet you look great! Now, send me your location please, or send /skip."
-#     )
-
-#     return LOCATION
-
-
-# async def location(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     """Stores the location and asks for some info about the user."""
-#     user = update.message.from_user
-#     user_location = update.message.location
-#     logger.info(
-#         "Location of %s: %f / %f", user.first_name, user_location.latitude, user_location.longitude
-#     )
-#     await update.message.reply_text(
-#         "Maybe I can visit you sometime! At last, tell me something about yourself."
-#     )
-
-#     return BIO
-
-
-# async def skip_location(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     """Skips the location and asks for info about the user."""
-#     user = update.message.from_user
-#     logger.info("User %s did not send a location.", user.first_name)
-#     await update.message.reply_text(
-#         "You seem a bit paranoid! At last, tell me something about yourself."
-#     )
-
-#     return BIO
-
-
-# async def bio(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     """Stores the info about the user and ends the conversation."""
-#     user = update.message.from_user
-#     logger.info("Bio of %s: %s", user.first_name, update.message.text)
-#     await update.message.reply_text("Thank you! I hope we can talk again some day.")
-
-#     return ConversationHandler.END
-
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancels and ends the conversation."""
@@ -346,6 +228,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return ConversationHandler.END
 
+
 async def del_acc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
@@ -356,7 +239,9 @@ async def del_acc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return ConversationHandler.END
 
+
 def main() -> None:
+    
     """Run the bot."""
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(TOKEN).build()
@@ -375,24 +260,16 @@ def main() -> None:
             # EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email)],
             LICENSE: [MessageHandler(filters.Regex("^(بله|خیر)$"), license)],
             REL: [MessageHandler(filters.TEXT & ~filters.COMMAND, rel)],
-
-            # GENDER: [MessageHandler(filters.Regex("^(Boy|Girl|Other)$"), gender)],
-            # PHOTO: [MessageHandler(filters.PHOTO, photo), CommandHandler("skip", skip_photo)],
-            # LOCATION: [
-            #     MessageHandler(filters.LOCATION, location),
-            #     CommandHandler("skip", skip_location),
-            # ],
-            # BIO: [MessageHandler(filters.TEXT & ~filters.COMMAND, bio)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
-# NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL
+
     application.add_handler(conv_handler)
     
     application.add_handler(CommandHandler('del', del_acc))
 
-    # Run the bot until the user presses Ctrl-C
     application.run_polling(allowed_updates=Update.ALL_TYPES)
+
 
 
 if __name__ == "__main__":
