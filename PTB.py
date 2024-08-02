@@ -52,7 +52,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     if not check_user_exists(update.effective_chat.id):
         await update.message.reply_text(
-        "شما قبلا ثبت نام کرده اید! ",
+        "شما قبلا ثبت‌نام کردید!!!",
         )
         
         return ConversationHandler.END
