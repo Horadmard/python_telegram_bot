@@ -83,7 +83,9 @@ async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
-    if not re.match(r'^09\d{9}$', update.message.text) and not re.match(r'^۰۹[\u0660-\u0669]{9}$', update.message.text):
+    # there are two type of arabic character 
+    # \u066n , \u06Fn
+    if not re.match(r'^09\d{9}$', update.message.text) and not re.match(r'^٠٩[\u0660-\u0669]{9}$', update.message.text) and not re.match(r'^۰۹[\u06F0-\u06F9]{9}$', update.message.text):
         await update.message.reply_text(
             "فرمت وارد شده صحیح نیست.\n"
             "مثال: 09123456789"
@@ -271,11 +273,9 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("User %s wants help.", user.first_name)
     await update.message.reply_text(
-        "هر سوال یا مشکلی داری، میتونی از این آیدی بپرسی:\n"
+        "هر سوال یا مشکلی داری، میتونی از این آیدی بپرسی:\n\n"
         "@cs_yazd_admin"
     )
-
-    delete_user_by_id(update.effective_user.id)
     return ConversationHandler.END
 
 
