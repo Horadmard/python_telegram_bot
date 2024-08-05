@@ -1,6 +1,7 @@
 
 import re
 from database import *
+import os
 
 import logging
 from typing import Optional, Tuple
@@ -313,4 +314,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    
+    if not os.path.exists('user_data.db'):
+        create_database()
+
     main()

@@ -1,4 +1,5 @@
 import sqlite3
+# import os
 
 def create_database():
     conn = sqlite3.connect("user_data.db")
@@ -96,6 +97,7 @@ def check_user_exists(id):
 
 
 # # Example usage:
+
 # create_database()
 
 # # Suppose you receive data for ID 1:
