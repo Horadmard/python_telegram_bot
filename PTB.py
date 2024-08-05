@@ -137,7 +137,7 @@ async def skip_uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def stunum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
-    if not re.match(r'^\d$', update.effective_message.text):
+    if not re.match(r'^\d+$', update.effective_message.text) and not re.match(r'^[\u0660-\u0669]+$', update.message.text) and not re.match(r'^[\u06F0-\u06F9]+$', update.message.text):
         await update.message.reply_text("فرمت وارد شده صحیح نیست.")
         return STUNUM
 
