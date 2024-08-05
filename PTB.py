@@ -308,13 +308,13 @@ def main() -> None:
     
     application.add_handler(CommandHandler('help', help))
     application.add_handler(CommandHandler('cancel', cancel))
-
+    
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
 
 if __name__ == "__main__":
-    
+
     if not os.path.exists('user_data.db'):
         create_database()
 
