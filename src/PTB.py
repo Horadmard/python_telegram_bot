@@ -5,16 +5,6 @@ import os
 import logging
 from typing import Optional, Tuple
 
-import json
-
-def load_config(filename='config.json'):
-    with open(filename, 'r') as file:
-        config = json.load(file)
-    return config
-
-# Load the configuration
-config = load_config()
-
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -24,6 +14,16 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+
+import json
+
+def load_config(filename='config.json'):
+    with open(filename, 'r') as file:
+        config = json.load(file)
+    return config
+
+# Load the configuration
+config = load_config()
 
 
 
