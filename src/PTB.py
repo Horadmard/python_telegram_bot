@@ -1,10 +1,19 @@
-
 import re
 from database import *
 import os
 
 import logging
 from typing import Optional, Tuple
+
+import json
+
+def load_config(filename='config.json'):
+    with open(filename, 'r') as file:
+        config = json.load(file)
+    return config
+
+# Load the configuration
+config = load_config()
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -29,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
-# TOKEN = '...'
+TOKEN = config['TOKEN']
 
 
 
