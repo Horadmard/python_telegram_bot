@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
 
 TOKEN = config['TOKEN']
-CHANNEL = config['CHANNEL']
+CHANNEL_ID = config['CHANNEL_ID']
 
 
 
@@ -259,7 +259,7 @@ async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         )
 
     await context.bot.send_message(
-        chat_id=CHANNEL,
+        chat_id=CHANNEL_ID,
         text=txt,
         # parse_mode='MarkdownV2',
     )
