@@ -3,7 +3,6 @@ from database import *
 import os
 
 import logging
-from typing import Optional, Tuple
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
