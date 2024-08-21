@@ -1,1 +1,1 @@
-Sign-up Telegram Bot designed for automation the Registration process.
+Doing fun stuff and learning how a bot working!!
