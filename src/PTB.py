@@ -1,11 +1,6 @@
 
-
-
-import os
-import re
-import json
-import logging
-from database import *
+import os, re, json, logging
+from db import *
 
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -304,11 +299,9 @@ def main() -> None:
         states={
             NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, name)],
             AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, age)],
-            # PHONE: [MessageHandler(filters.Regex("^09[0-9]{9}$"), phone)],
             PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, phone)],
             UNI: [MessageHandler(filters.TEXT & ~filters.COMMAND, uni), CommandHandler("skip", skip_uni)],
             STUNUM: [MessageHandler(filters.TEXT & ~filters.COMMAND, stunum)],
-            # EMAIL: [MessageHandler(filters.Regex(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+'), email)],
             EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email)],
             LICENSE: [MessageHandler(filters.Regex("^(بله|خیر)$"), license)],
             REL: [MessageHandler(filters.TEXT & ~filters.COMMAND, rel)],
@@ -326,8 +319,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-
-    if not os.path.exists('database.db'):
-        create_database()
 
     main()
