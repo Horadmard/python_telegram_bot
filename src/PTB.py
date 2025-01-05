@@ -1,4 +1,5 @@
 
+
 import os, re, json, logging
 from db import *
 
@@ -15,7 +16,11 @@ from telegram.ext import (
 
 
 def load_config(filename='config.json'):
-    with open(filename, 'r') as file:
+    # Construct the path to the config file in the parent directory
+    parent_directory = os.path.dirname(os.path.abspath(__file__))  # Get the current file's directory
+    config_path = os.path.join(parent_directory, filename)  # Create the path to the config file
+
+    with open(config_path, 'r') as file:
         config = json.load(file)
     return config
 
@@ -33,18 +38,17 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-NAME, AGE, PHONE, UNI, STUNUM, EMAIL, LICENSE, REL = range(8)
+STDID = range(2)
 
 TOKEN = config['TOKEN']
-CHANNEL_ID = config['CHANNEL_ID']
-
+# CHANNEL_ID = config['CHANNEL_ID']
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     if check_user_exists(update.effective_chat.id):
         await update.message.reply_text(
-        "شما قبلا ثبت‌نام کردید!!!",
+        f"به این زودی یادت رفت؟! \n کدت اینه: \n{get_element(update.effective_chat.id, 'dis_code')}",
         )
         
         return ConversationHandler.END
@@ -53,14 +57,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info("user.id of %s: %s", user.first_name, user.id)
 
     await update.message.reply_text(
-        "🌀 نام و نام‌خانوادگی: ",
+        "🌀 کد دانشجویی خود را وارد کنید:",
     )
 
-    insert_user_data(update.effective_user.id, ('','','','','','','',''))
+    insert_user_data(update.effective_user.id, ('','','',''))
 
-    return NAME
+    return STDID
 
-async def name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def getstdid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     user = update.message.from_user
     logger.info("name of %s: %s", user.first_name, update.message.text)
@@ -89,77 +93,6 @@ async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return PHONE
 
-async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    # there are two type of arabic character 
-    # \u066n , \u06Fn
-    if not re.match(r'^09\d{9}$', update.message.text) and not re.match(r'^٠٩[\u0660-\u0669]{9}$', update.message.text) and not re.match(r'^۰۹[\u06F0-\u06F9]{9}$', update.message.text):
-        await update.message.reply_text(
-            "فرمت وارد شده صحیح نیست.\n"
-            "مثال: 09123456789"
-            )
-        return PHONE
-
-    user = update.message.from_user
-    logger.info("phone of %s: %s", user.first_name, update.message.text)
-
-    update_user_data(update.effective_user.id, "phone", update.effective_message.text)
-
-    await update.message.reply_text(
-        "🌀 دانشگاه محل تحصیل: \n"
-        "_  \- اگه در حال حاضر مشغول به تحصیل نیستی کلیک کن /skip _",
-        parse_mode='MarkdownV2'
-        )
-
-    return UNI
-
-
-async def uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    user = update.message.from_user
-    logger.info("University of %s: %s", user.first_name, update.message.text)
-
-    update_user_data(update.effective_user.id, "uni", update.effective_message.text)
-
-    await update.message.reply_text(
-        "🌀 شماره دانشجویی:"
-        )
-
-    return STUNUM
-
-async def skip_uni(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    
-    user = update.message.from_user
-    logger.info("User %s did not send a photo.", user.first_name)
-
-    await update.message.reply_text(
-        "🌀 ایمیل شخصی:\n"
-        "_  \- از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد\. _",
-        parse_mode='MarkdownV2',
-        )
-
-    update_user_data(update.effective_user.id, "uni", '-')
-    update_user_data(update.effective_user.id, "stunum", '-')
-
-    return EMAIL
-
-async def stunum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    if not re.match(r'^\d+$', update.effective_message.text) and not re.match(r'^[\u0660-\u0669]+$', update.message.text) and not re.match(r'^[\u06F0-\u06F9]+$', update.message.text):
-        await update.message.reply_text("فرمت وارد شده صحیح نیست.")
-        return STUNUM
-
-    user = update.message.from_user
-    logger.info("Student code of %s: %s", user.first_name, update.message.text)
-    update_user_data(update.effective_user.id, "stunum", update.effective_message.text)
-
-    await update.message.reply_text(
-        "🌀 ایمیل شخصی:\n"
-        "_  \- از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد\. _",
-        parse_mode='MarkdownV2',
-        )
-
-    return EMAIL
 
 async def email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
@@ -297,14 +230,7 @@ def main() -> None:
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
-            NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, name)],
-            AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, age)],
-            PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, phone)],
-            UNI: [MessageHandler(filters.TEXT & ~filters.COMMAND, uni), CommandHandler("skip", skip_uni)],
-            STUNUM: [MessageHandler(filters.TEXT & ~filters.COMMAND, stunum)],
-            EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email)],
-            LICENSE: [MessageHandler(filters.Regex("^(بله|خیر)$"), license)],
-            REL: [MessageHandler(filters.TEXT & ~filters.COMMAND, rel)],
+            STDID: [MessageHandler(filters.TEXT & ~filters.COMMAND, getstdid)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
