@@ -138,7 +138,7 @@ def main() -> None:
     application.add_handler(conv_handler)
     
     application.add_handler(CommandHandler('help', help))
-    application.add_handler(CommandHandler('cancel', cancel))
+    application.add_handler(CommandHandler('cankel', cancel))
     
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
