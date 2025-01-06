@@ -2,6 +2,7 @@
 
 import os, re, json, logging
 from db import *
+from search import *
 
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -17,7 +18,7 @@ from telegram.ext import (
 
 def load_config(filename='config.json'):
     # Construct the path to the config file in the parent directory
-    parent_directory = os.path.dirname(os.path.abspath(__file__))  # Get the current file's directory
+    parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Get the current file's directory
     config_path = os.path.join(parent_directory, filename)  # Create the path to the config file
 
     with open(config_path, 'r') as file:
@@ -38,171 +39,69 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-STDID = range(2)
+STDID = range(1)
 
 TOKEN = config['TOKEN']
-# CHANNEL_ID = config['CHANNEL_ID']
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
-    if check_user_exists(update.effective_chat.id):
-        await update.message.reply_text(
-        f"به این زودی یادت رفت؟! \n کدت اینه: \n{get_element(update.effective_chat.id, 'dis_code')}",
-        )
-        
-        return ConversationHandler.END
-
     user = update.message.from_user
     logger.info("user.id of %s: %s", user.first_name, user.id)
 
-    await update.message.reply_text(
-        "🌀 کد دانشجویی خود را وارد کنید:",
-    )
-
-    insert_user_data(update.effective_user.id, ('','','',''))
+    if check_user_exists(update.effective_chat.id) and get_element(update.effective_chat.id, 'stu_num') != '':
+        await update.message.reply_text(
+            f"به این زودی یادت رفت؟!\nکد تخفیف شما:\n{get_element(update.effective_chat.id, 'dis-code')}",
+        )
+        
+        return ConversationHandler.END
+    
+    elif not check_user_exists(update.effective_chat.id):
+        insert_user_data(update.effective_user.id, (''))
+        await update.message.reply_text(
+            "سلام\n🌀 کد دانشجوییتو بده ببینم:",
+        )
 
     return STDID
+
 
 async def getstdid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     user = update.message.from_user
     logger.info("name of %s: %s", user.first_name, update.message.text)
 
-    update_user_data(update.effective_user.id, "name", update.effective_message.text)
+    update_user_data(update.effective_user.id, 'stu_num', convert_numbers(update.message.text))
+    record = search_in_excel(get_element(update.effective_user.id, 'stu_num'))
 
-    await update.message.reply_text("🌀 سن:")
-
-    return AGE
-
-async def age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    if not re.match(r'^\d{1,2}$', update.effective_message.text):
-        await update.message.reply_text("فرمت وارد شده صحیح نیست.")
-        return AGE
-
-    user = update.message.from_user
-    logger.info("age of %s: %s", user.first_name, update.message.text)
-
-    update_user_data(update.effective_user.id, "age", update.effective_message.text)
-
-    await update.message.reply_text(
-        "🌀 شماره تلفن همراه:",
-        
-        )
-
-    return PHONE
-
-
-async def email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', update.message.text):
-        await update.message.reply_text(
-            "فرمت وارد شده برای آدرس ایمیل صحیح نیست.\n"
-            "مثال: example@gmail.com"
+    if record is not None and not record.empty:
+        for index, (_, r) in enumerate(record.iterrows(), start=1):
+            await context.bot.send_message(
+                chat_id=user.id,
+                text=f"بفرمایید {r['نام']} "
+                    f"{r['نام‌خانوادگی']} "
+                    f"عزیز:\n{r['کد تخفیف']}"
             )
-        return EMAIL
 
-    user = update.message.from_user
-    logger.info("Email of %s: %s", user.first_name, update.message.text)
-    update_user_data(update.effective_user.id, "email", update.effective_message.text)
 
-    reply_keyboard = [["بله", "خیر"]]
-
-    await update.message.reply_text(
-
-        "🌀 درخواست گواهی شرکت در دوره رو دارید؟\n"
-        "_  \- گواهی از طرف انجمن علمی علوم کامپیوتر یزد صادر میشه و نشون میده شما دوره رو گذروندید\. _",
-        parse_mode='MarkdownV2',
-
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True, input_field_placeholder="گواهی بدم؟", resize_keyboard=True,
-        ),
-
+    else:
+        await context.bot.send_message(
+            chat_id=user.id,
+            text="همچین کسی نداریم!\nدوباره امتحان کن /start",
+            reply_markup=ReplyKeyboardRemove()
         )
-
-    return LICENSE
-
-async def license(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    user = update.message.from_user
-    logger.info("Is he/she whants license? %s: %s", user.first_name, update.message.text)
-    update_user_data(update.effective_user.id, "want_license", update.effective_message.text)
-
-    await update.message.reply_text(
-        "🌀 طریقه‌ی آشنایی با رویداد ما:\n"
-        "_  \- کانال تلگرامی، اینستاگرم، معرفی دوستان و \.\.\. _",
-        parse_mode='MarkdownV2',
-        reply_markup=ReplyKeyboardRemove(),
-        )
-
-    return REL
-
-
-async def rel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
-    user = update.message.from_user
-    logger.info("%s: %s", user.first_name, update.message.text)
-
-    update_user_data(update.effective_user.id, "relation", update.effective_message.text)
-
-
-    txt = f"""
-
-🔗 فرم ثبت نام دوره پایتون
-
-🌀 نام و نام‌خانوادگی: {get_element(update.effective_user.id, 'name')}
-
-🌀 سن: {get_element(update.effective_user.id, 'age')}
-
-🌀 شماره تلفن همراه: {get_element(update.effective_user.id, 'phone')}
-
-🌀 دانشگاه محل تحصیل: {get_element(update.effective_user.id, 'uni')}
-- اگه در حال حاضر مشغول به تحصیل نیستید این بخش و بخش بعدی رو خالی بزارید.
-
-🌀 شماره دانشجویی: {get_element(update.effective_user.id, 'stunum')}
-
-🌀 ایمیل شخصی: {get_element(update.effective_user.id, 'email')}
-- از این ایمیل برای دریافت کلاس‌های ضبط شده استفاده خواهید کرد.
-
-🌀 درخواست گواهی شرکت در دوره رو دارید؟ {get_element(update.effective_user.id, 'want_license')}
-- گواهی از طرف انجمن علمی علوم کامپیوتر یزد صادر میشه و نشون میده شما دوره رو گذروندید.
-
-🌀 طریقه‌ی آشنایی با رویداد ما: {get_element(update.effective_user.id, 'relation')}
-- کانال تلگرامی، اینستاگرم، معرفی دوستان و ...
-
-
-"""
+        print(record)
+        delete_user_by_id(user.id)
+        return ConversationHandler.END
     
-
-    await context.bot.send_message(
-        chat_id=user.id,
-        text=txt,
-        # parse_mode='MarkdownV2',
-    )
-
-    await update.message.reply_text(
-        "ثبت نام شما با *موفقیت* انجام شد\.",
-        parse_mode='MarkdownV2'
-        )
-
-    await context.bot.send_message(
-        chat_id=CHANNEL_ID,
-        text=txt,
-        # parse_mode='MarkdownV2',
-    )
-
-    return ConversationHandler.END
-
+    return ConversationHandler.END 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancels and ends the conversation."""
     user = update.message.from_user
     logger.info("User %s canceled the registration.", user.first_name)
     await update.message.reply_text(
-        # "ثبت‌نام هوتوتو ..."
-        "ثبت‌نام لغو و اطلاعاتت پاک شد؛\n"
-        "اگه خواستی ثبت‌نامت رو از سر بگیری، کلیک کن /start",
+        "اطلاعاتت هوتوتو؛\n"
+        "/start برای از سر گیری فرآیند.",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -230,6 +129,7 @@ def main() -> None:
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
+            # YN: [MessageHandler(filters.TEXT & ~filters.COMMAND, yesorno)],
             STDID: [MessageHandler(filters.TEXT & ~filters.COMMAND, getstdid)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
