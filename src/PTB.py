@@ -49,10 +49,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     logger.info("user.id of %s: %s", user.first_name, user.id)
 
-    if check_user_exists(update.effective_chat.id) and get_element(update.effective_chat.id, 'stu_num') != '':
-        await update.message.reply_text(
-            f"به این زودی یادت رفت؟!\nکد تخفیف شما:\n{get_element(update.effective_chat.id, 'dis-code')}",
-        )
+    if check_user_exists(update.effective_chat.id):
+
+        record = search_in_excel(get_element(update.effective_user.id, 'stu_num'))
+
+        if record is not None and not record.empty:
+            for index, (_, r) in enumerate(record.iterrows(), start=1):
+                await update.message.reply_text(
+                    f"به این زودی یادت رفت؟!\nکد تخفیف شما:\n{r['کد تخفیف']}",
+                )
         
         return ConversationHandler.END
     
@@ -108,6 +113,23 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     delete_user_by_id(update.effective_user.id)
     return ConversationHandler.END
 
+async def show_all_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+    user = update.message.from_user
+    logger.info("User %s Show all Data.", user.first_name)
+
+    records = show_excel()
+    for index, (_, r) in enumerate(records.iterrows(), start=1):
+        await update.message.reply_text(
+            f"{r['ردیف']}- {r['نام']} {r['نام‌خانوادگی']}, {r['شماره دانشجویی']}, {r['کد تخفیف']}",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        # print(f"{r['ردیف']}- {r['نام']} {r['نام‌خانوادگی']}, {r['شماره دانشجویی']}, {r['کد تخفیف']}")
+
+
+    # delete_user_by_id(update.effective_user.id)
+    return ConversationHandler.END
+
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     user = update.message.from_user
@@ -138,6 +160,7 @@ def main() -> None:
     application.add_handler(conv_handler)
     
     application.add_handler(CommandHandler('help', help))
+    application.add_handler(CommandHandler('show', show_all_data))
     application.add_handler(CommandHandler('cankel', cancel))
     
     application.run_polling(allowed_updates=Update.ALL_TYPES)
